@@ -4,6 +4,8 @@ import com.co.api_restaurant.model.Order;
 import com.co.api_restaurant.model.Product;
 import com.co.api_restaurant.service.OrderRepository;
 import com.co.api_restaurant.service.ProductRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +29,6 @@ public class OrderUseCase {
     }
 
     public Order saveOrder(Order order) {
-        // Al crear pedido, el estado debe ser ACTIVO y el total aún no calculado
         order.setStatus("ACTIVO");
         order.setTotal(0.0);
         return orderRepository.saveOrder(order);
@@ -58,7 +59,9 @@ public class OrderUseCase {
         if (optOrder.isPresent()) {
             Order order = optOrder.get();
             if (!"ACTIVO".equals(order.getStatus())) {
-                throw new IllegalStateException("El pedido ya fue cerrado o cancelado.");
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "El pedido ya fue cerrado o cancelado."
+                );
             }
             double total = 0.0;
             for (Long productId : order.getProductIds()) {
@@ -67,7 +70,6 @@ public class OrderUseCase {
                     total += productOpt.get().getPrice();
                 }
             }
-            // Aplica descuento máximo del 10%
             if (discount > 10.0) {
                 discount = 10.0;
             }
@@ -78,7 +80,9 @@ public class OrderUseCase {
             orderRepository.updateOrder(order);
             return order;
         } else {
-            throw new IllegalArgumentException("Pedido no encontrado");
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Pedido no encontrado"
+            );
         }
     }
 
@@ -88,14 +92,17 @@ public class OrderUseCase {
         if (optOrder.isPresent()) {
             Order order = optOrder.get();
             if (!"ACTIVO".equals(order.getStatus())) {
-                throw new IllegalStateException("El pedido ya fue cerrado o cancelado.");
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "El pedido ya fue cerrado o cancelado."
+                );
             }
             order.setStatus("CANCELADO");
             orderRepository.updateOrder(order);
             return order;
         } else {
-            throw new IllegalArgumentException("Pedido no encontrado");
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Pedido no encontrado"
+            );
         }
     }
 }
-
