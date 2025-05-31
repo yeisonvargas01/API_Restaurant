@@ -1,44 +1,45 @@
 package com.co.api_restaurant.service;
 
 import com.co.api_restaurant.model.Order;
+import com.co.api_restaurant.service.jpa.JpaOrderRepository;
+import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.List;
+import java.util.Optional;
 
+@Service
 public class MySqlOrderService implements OrderRepository {
-    private final Map<Long, Order> orderDB = new HashMap<>();
-    private final AtomicLong idGenerator = new AtomicLong();
+
+    private final JpaOrderRepository jpaOrderRepository;
+
+    public MySqlOrderService(JpaOrderRepository jpaOrderRepository) {
+        this.jpaOrderRepository = jpaOrderRepository;
+    }
 
     @Override
     public List<Order> getAllOrders() {
-        return new ArrayList<>(orderDB.values());
+        return jpaOrderRepository.findAll();
     }
 
     @Override
     public Optional<Order> getOrderById(Long id) {
-        return Optional.ofNullable(orderDB.get(id));
+        return jpaOrderRepository.findById(id);
     }
 
     @Override
     public Order saveOrder(Order order) {
-        Long id = idGenerator.incrementAndGet();
-        order.setId(id);
-        orderDB.put(id, order);
-        return order;
+        return jpaOrderRepository.save(order);
     }
 
     @Override
     public Order updateOrder(Order order) {
-        if (order.getId() != null && orderDB.containsKey(order.getId())) {
-            orderDB.put(order.getId(), order);
-            return order;
-        }
-        throw new IllegalArgumentException("Pedido no encontrado");
+        return jpaOrderRepository.save(order);
     }
 
     @Override
     public void deleteOrder(Long id) {
-        orderDB.remove(id);
+        jpaOrderRepository.deleteById(id);
     }
 }
+
 

@@ -1,7 +1,7 @@
-package com.co.api_restaurant;
+package com.co.api_restaurant.usecase;
 
 import com.co.api_restaurant.service.*;
-import com.co.api_restaurant.usecase.*;
+import com.co.api_restaurant.service.jpa.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,13 +9,13 @@ import org.springframework.context.annotation.Configuration;
 public class RestaurantApplicationConfig {
 
     @Bean
-    public ProductRepository productRepository() {
-        return new MySqlProductService();
+    public ProductRepository productRepository(JpaProductRepository jpaProductRepository) {
+        return new MySqlProductService(jpaProductRepository);
     }
 
     @Bean
-    public OrderRepository orderRepository() {
-        return new MySqlOrderService();
+    public OrderRepository orderRepository(JpaOrderRepository jpaOrderRepository) {
+        return new MySqlOrderService(jpaOrderRepository);
     }
 
     @Bean
