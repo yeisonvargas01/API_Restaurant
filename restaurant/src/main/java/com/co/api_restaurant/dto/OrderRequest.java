@@ -1,4 +1,4 @@
-package com.example.restaurant.dto;
+package com.co.api_restaurant.dto;
 
 import lombok.Data;
 
