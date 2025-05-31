@@ -1,9 +1,15 @@
 package com.co.api_restaurant.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "products")
+@Data // Genera getters, setters, toString, equals, y hashCode
+@NoArgsConstructor // Constructor vacío
+@AllArgsConstructor // Constructor con todos los campos
 public class Product {
 
     @Id
@@ -18,30 +24,8 @@ public class Product {
 
     @Column(nullable = false)
     private double price;
-
-    // Constructor vacío (obligatorio para JPA)
-    public Product() {}
-
-    public Product(Long id, String name, String category, double price) {
-        this.id = id;
-        this.name = name;
-        this.category = category;
-        this.price = price;
-    }
-
-    // Getters y setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
-
-    public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
 }
+
 
 
 
